@@ -36,7 +36,11 @@ public class CustomDate {
     public Date getDate(){
         return this.aDate;
     }
-    
+    public String getDateAsStringYY(){
+        SimpleDateFormat formatPattern = new SimpleDateFormat("dd-MMM-yy");
+        return formatPattern.format(aDate);
+        
+    }
     public String getDateAsString(){
         SimpleDateFormat formatPattern = new SimpleDateFormat("ddMMMyyyy");
         return formatPattern.format(aDate);

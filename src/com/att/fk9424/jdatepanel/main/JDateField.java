@@ -2,15 +2,18 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.att.fk9424.jdatepanel.view;
+package com.att.fk9424.jdatepanel.main;
 
 import com.att.fk9424.jdatepanel.model.CustomDate;
 import com.att.fk9424.jdatepanel.model.DateAction;
 import com.att.fk9424.jdatepanel.model.JDateDialog;
+import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 
@@ -22,40 +25,34 @@ import javax.swing.JTextField;
  */
 public final class JDateField extends JTextField implements DateAction {
     private JDateDialog dateWin;
-    private ArrayList<JTextField> fieldListeners;
 
     public JDateField(JFrame frame){
         this.dateWin = new JDateDialog(frame,this);
         init();
-        addFieldListener(this);
+    }
+    public JDateField(JDialog dialog){
+        this.dateWin = new JDateDialog(dialog,this);
+        init();
     }
     public void init(){
-        fieldListeners = new ArrayList<JTextField>();
+        this.setForeground(Color.LIGHT_GRAY);
+        CustomDate tDate = new CustomDate(new Date());
+        this.setText(tDate.getDateAsString());
         this.addMouseListener(new MouseAdapter(){
                 @Override
                 public void mouseClicked(MouseEvent e){
                     JTextField textField = (JTextField)e.getSource();
+                    textField.setText("");
+                    textField.setForeground(Color.BLACK);
                     int xPos = textField.getLocationOnScreen().x;
                     int yPos = textField.getLocationOnScreen().y + textField.getHeight();
                     dateWin.setLocation(xPos, yPos);
                     dateWin.setVisible(true);         
                 }
-        });       
-    }
-    /**
-     * addFieldListener register any FieldListener that need to receive event
-     * notification about a date selected from the JDateWindow table
-     * @param l a FieldListener to be added (which is a JTextField)
-     */
-    public void addFieldListener(JTextField field){
-        this.fieldListeners.add(field);
-    }
-    
+        });
+    }    
     @Override
-    public void fireDateChanged(CustomDate aDate){
-        Iterator<JTextField> listeners = fieldListeners.iterator();
-        while(listeners.hasNext()){
-            ((JTextField)listeners.next()).setText(aDate.getDateAsString());
-        }
+    public void dateChanged(CustomDate aDate){
+        this.setText(aDate.getDateAsStringYY());
     }
 }

@@ -9,5 +9,5 @@ package com.att.fk9424.jdatepanel.model;
  * @author fk9424
  */
 public interface DateAction {
-    public void fireDateChanged(CustomDate aDate);
+    public void dateChanged(CustomDate aDate);
 }

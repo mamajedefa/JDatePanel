@@ -29,7 +29,7 @@ public class DateTableModel extends AbstractTableModel {
         labels.getString("SAT"),
     };
     private ArrayList<ArrayList<CustomDate>> rowData;
-    private SimpleDateFormat formatter = new SimpleDateFormat("ddMMMyyyy");
+    private SimpleDateFormat formatter = new SimpleDateFormat("dd-MMM-yy");
     private Date theDate;
 
     public DateTableModel(){

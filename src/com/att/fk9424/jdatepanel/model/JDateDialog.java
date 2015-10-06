@@ -4,6 +4,8 @@
  */
 package com.att.fk9424.jdatepanel.model;
 
+import com.att.fk9424.jdatepanel.listeners.DateListener;
+import com.att.fk9424.jdatepanel.events.DateEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -12,7 +14,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.BorderFactory;
@@ -32,7 +36,8 @@ import javax.swing.table.DefaultTableCellRenderer;
  * @author fk9424
  */
 public class JDateDialog extends JDialog implements WindowFocusListener {
-    private ResourceBundle labels = ResourceBundle.getBundle("com.att.fk9424.jdatepanel.properties/labels", Locale.getDefault());    
+    private ResourceBundle labels = ResourceBundle.getBundle("com.att.fk9424.jdatepanel.properties/labels", Locale.getDefault());
+    private ArrayList<DateListener> dateListeners = new ArrayList<DateListener>();
     public JDateDialog(JDialog parent, final DateAction theButton){
         super(parent, false);
         init(theButton);
@@ -68,8 +73,9 @@ public class JDateDialog extends JDialog implements WindowFocusListener {
             public void mouseReleased(MouseEvent event) {
                 int rowIndex = tableDate.rowAtPoint(event.getPoint());
                 int colIndex = tableDate.columnAtPoint(event.getPoint());               
-                CustomDate aDate = (CustomDate)tableDate.getModel().getValueAt(rowIndex, colIndex);                  
-                theButton.fireDateChanged(aDate);
+                CustomDate aDate = (CustomDate)tableDate.getModel().getValueAt(rowIndex, colIndex);
+                theButton.dateChanged(aDate);
+                fireDateChanged(aDate);
                 windowLostFocus(null);                            
             }
 
@@ -83,7 +89,16 @@ public class JDateDialog extends JDialog implements WindowFocusListener {
         centerRenderer.setHorizontalAlignment( JLabel.CENTER );
         tableDate.setDefaultRenderer(String.class, centerRenderer);
     }
-    
+    public void addDateListener(DateListener dl){
+        this.dateListeners.add(dl);
+    }
+    public void fireDateChanged(CustomDate aDate){
+        DateEvent event = new DateEvent(this, aDate);
+        Iterator<DateListener> listeners = dateListeners.iterator();
+        while(listeners.hasNext()) {
+            ((DateListener) listeners.next()).updateDate(event);
+        }
+    }
     /**
      * createDateActionPanel
      * @param tableModel a DateTableModel to be use for all date calculation
