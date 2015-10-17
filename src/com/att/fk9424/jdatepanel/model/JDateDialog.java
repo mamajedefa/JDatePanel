@@ -8,6 +8,7 @@ import com.att.fk9424.jdatepanel.listeners.DateListener;
 import com.att.fk9424.jdatepanel.events.DateEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -24,7 +25,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -38,14 +38,16 @@ import javax.swing.table.DefaultTableCellRenderer;
 public class JDateDialog extends JDialog implements WindowFocusListener {
     private ResourceBundle labels = ResourceBundle.getBundle("com.att.fk9424.jdatepanel.properties/labels", Locale.getDefault());
     private ArrayList<DateListener> dateListeners = new ArrayList<DateListener>();
-    public JDateDialog(JDialog parent, final DateAction theButton){
-        super(parent, false);
+    private CustomDate aDate = null;
+    
+    public JDateDialog(Window parent, final DateAction theButton){
+        super(parent);
         init(theButton);
     }
-    public JDateDialog(JFrame parent, final DateAction theButton){
-        super(parent, true);
-        init(theButton);
-    }
+    /**
+     * 
+     * @param theButton 
+     */
     private void init(final DateAction theButton) {
         this.setUndecorated(true);
         JPanel panel = new JPanel(new BorderLayout());
@@ -73,9 +75,8 @@ public class JDateDialog extends JDialog implements WindowFocusListener {
             public void mouseReleased(MouseEvent event) {
                 int rowIndex = tableDate.rowAtPoint(event.getPoint());
                 int colIndex = tableDate.columnAtPoint(event.getPoint());               
-                CustomDate aDate = (CustomDate)tableDate.getModel().getValueAt(rowIndex, colIndex);
+                aDate = (CustomDate)tableDate.getModel().getValueAt(rowIndex, colIndex);
                 theButton.dateChanged(aDate);
-                fireDateChanged(aDate);
                 windowLostFocus(null);                            
             }
 
@@ -183,6 +184,7 @@ public class JDateDialog extends JDialog implements WindowFocusListener {
 
     @Override
     public void windowLostFocus(WindowEvent e) {
+        fireDateChanged(aDate);
         this.setVisible(false);
         this.dispose();
     }    
